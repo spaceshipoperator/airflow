@@ -1040,6 +1040,9 @@ class BaseOperator(Base):
         self._upstream_list = []
         self._downstream_list = []
 
+    def is_in_adhoc_dag(self):
+        return self.dag_id == "adhoc_" + self.owner
+
     @property
     def schedule_interval(self):
         """
@@ -1259,11 +1262,10 @@ class BaseOperator(Base):
                 logging.debug("Trying to set task {self.dag_id}.{self.task_id}"
                               "as a relative of itself.".format(self=self))
                 continue
-            if not isinstance(task_or_task_list, list):
+            if not isinstance(task_or_task_list, BaseOperator):
                 raise Exception('Expecting a task')
             if task.dag_id != self.dag_id:
-                if (self.dag_id == "adhoc_" + self.owner
-                        or task.dag_id == "adhoc_" + task.owner):
+                if self.is_in_adhoc_dag() or task.is_in_adhoc_dag():
                     logging.debug("Setting dependencies for tasks not added to"
                                   " a DAG. Don't forget to use dag.add_task.")
                 else:
@@ -1680,26 +1682,31 @@ class DAG(object):
         :param task: the task you want to add
         :type task: task
         '''
+        if not task.is_in_adhoc_dag() and task.dag_id != self.dag_id:
+            raise Exception(
+                "Task id '{task.task_id}' already belongs to "
+                "dag '{task.dag_id}'. You cannot add it to dag"
+                "'{self.dag_id}'. ".format(task=task, self=self))
+
         if not self.start_date and not task.start_date:
             raise Exception("Task is missing the start_date parameter")
         if not task.start_date:
             task.start_date = self.start_date
 
         if task.task_id in [t.task_id for t in self.tasks]:
-            raise Exception(
-                "Task id '{0}' has already been added "
-                "to the DAG ".format(task.task_id))
+            logging.debug("Task id '{0}' has already been added to "
+                          "the DAG. Ignoring, ".format(task.task_id))
         else:
             self.tasks.append(task)
             task.dag_id = self.dag_id
             task.dag = self
-        self.task_count = len(self.tasks)
+            self.task_count = len(self.tasks)
 
     def add_tasks(self, tasks):
         '''
         Add a list of tasks to the DAG
 
-        :param task: a lit of tasks you want to add
+        :param task: a list of tasks you want to add
         :type task: list of tasks
         '''
         for task in tasks:
