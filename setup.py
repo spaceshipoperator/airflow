@@ -52,6 +52,7 @@ setup(
         'statsd>=3.0.1',
         'thrift>=0.9.2',
         'tornado>=4.0.2',
+        'yapsy',
     ],
     extras_require={
         'all': devel + optional,
