@@ -1,4 +1,5 @@
-export AIRFLOW_CONFIG=~/airflow_test/unittests.cfg
+export AIRFLOW_HOME=${AIRFLOW_HOME:=~/airflow_test}
+export AIRFLOW_CONFIG=$AIRFLOW_HOME/unittests.cfg
 rm airflow/www/static/coverage/*
 nosetests --with-doctest --with-coverage --cover-html --cover-package=airflow -v --cover-html-dir=airflow/www/static/coverage
 # To run individual tests:

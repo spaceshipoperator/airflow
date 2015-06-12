@@ -4,10 +4,10 @@ The installation is quick and straightforward.
 
 .. code-block:: bash
 
-    # Airflow needs a configuration file, which may be specified by
-    # the environment variable AIRFLOW_CONFIG
-    # (optional, if unset defaults to ~/airflow/airflow.cfg)
-    export AIRFLOW_CONFIG=~/airflow/airflow.cfg
+    # airflow needs a home, ~/airflow is the default,
+    # but you can lay foundation somewhere else if you prefer
+    # (optional)
+    export AIRFLOW_HOME=~/airflow
 
     # install from pypi using pip
     pip install airflow
@@ -18,11 +18,10 @@ The installation is quick and straightforward.
     # start the web server, default port is 8080
     airflow webserver -p 8080
 
-The location of AIRFLOW_CONFIG is referred to as the Airflow home (or
-AIRFLOW_HOME).  When the airflow command is run if the specified
-configuration file does not exist it will be created with default settings,
-afterwards you can inspect these settings through the UI from the
-``Admin->Configuration`` menu.
+Upon running these commands, airflow will create the ``$AIRFLOW_HOME`` folder
+and lay a "airflow.cfg" files with defaults that get you going fast. You can
+inspect the file either in ``$AIRFLOW_HOME/airflow.cfg``, or through the UI in
+the ``Admin->Configuration`` menu.
 
 Out of the box, airflow uses a sqlite database, which you should outgrow
 fairly quickly since no parallelization is possible using this database

@@ -221,15 +221,24 @@ def mkdir_p(path):
             raise Exception('Had trouble creating a directory')
 
 """
-The environment variable AIRFLOW_CONFIG is a complete path (optionally prefixed with '~/' to indicate user home) along with the file name for the Airflow configuration file, if the file does not exist at this location one will be generated with default settings.  AIRFLOW_HOME is determined by the location of AIRFLOW_CONFIG which defaults to:
-    AIRFFLOW_CONFIG="~/airflow/airflow.cfg"
+The following environment variables are evaluated:
+    AIRFLOW_HOME (default: "~/airflow"), this directory will be created if it
+    does not exist, it is the location of log files, user DAGs and other files
+    maintained by Airflow.
+
+    AIRFLOW_CONFIG (default: "~/airflow/airflow.cfg"), this file will be
+    created if it does not exist and will include generated default values.
 """
 
-AIRFLOW_CONFIG = os.environ.get("AIRFLOW_CONFIG", "~/airflow/airflow.cfg")
+AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME",
+    os.path.expanduser("~/airflow"))
 
-AIRFLOW_HOME = os.path.dirname(AIRFLOW_CONFIG)
+AIRFLOW_CONFIG = os.environ.get("AIRFLOW_CONFIG",
+    os.path.expanduser("~/airflow/airflow.cfg"))
 
 mkdir_p(AIRFLOW_HOME)
+
+mkdir_p(os.path.dirname(AIRFLOW_CONFIG))
 
 if not os.path.isfile(AIRFLOW_CONFIG):
     """
