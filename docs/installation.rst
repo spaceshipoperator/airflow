@@ -44,9 +44,9 @@ SqlAlchemy backend. We recommend using **MySQL** or **Postgres**.
 
 Once you've setup your database to host Airflow, you'll need to alter the
 SqlAlchemy connection string located in your configuration file
-``$AIRFLOW_HOME/airflow.cfg``. You should then also change the "executor" 
-setting to use "LocalExecutor", an executor that can parallelize task
-instances locally.
+``$AIRFLOW_CONFIG`` or ``~/airflow/airflow.cfg``. You should then also change
+the "executor" setting to use "LocalExecutor", an executor that can parallelize
+task instances locally.
 
 .. code-block:: bash
 
